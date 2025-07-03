@@ -1,2 +1,11 @@
 cmdr is a fast, REPL-based command-line interface written in Rust that lets users interact with their shell using natural language. It intercepts user input, using a local llm to translate requests into shell commands, then executes them transparently.
 
+## License
+
+This project is licensed under either of
+
+ * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or https://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license ([LICENSE-MIT](LICENSE-MIT) or https://opensource.org/licenses/MIT)
+
+at your option.
+
