@@ -1,0 +1,8 @@
+# Global repository ownership
+*       @vivienhenz24
+
+# Core library ownership
+/cmdr-core/  @vivienhenz24
+
+# CLI binary ownership  
+/cmdr-cli/   @vivienhenz24 
