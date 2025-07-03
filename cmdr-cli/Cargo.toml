@@ -1,0 +1,22 @@
+[package]
+name = "cmdr-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "CLI binary for cmdr - natural language to shell command translation"
+keywords.workspace = true
+categories.workspace = true
+
+[[bin]]
+name = "cmdr"
+path = "src/main.rs"
+
+[dependencies]
+cmdr-core = { path = "../cmdr-core" }
+# CLI-specific dependencies will be added here
+
+[dev-dependencies]
+# Test dependencies will be added here 

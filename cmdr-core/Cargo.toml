@@ -1,0 +1,17 @@
+[package]
+name = "cmdr-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Core library for cmdr - natural language to shell command translation"
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Core dependencies will be added here
+
+[dev-dependencies]
+# Test dependencies will be added here 

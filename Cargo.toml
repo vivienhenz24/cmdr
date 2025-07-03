@@ -1,0 +1,20 @@
+[workspace]
+members = [
+    "cmdr-core",
+    "cmdr-cli",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["cmdr contributors"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/cmdr-project/cmdr"
+homepage = "https://github.com/cmdr-project/cmdr"
+description = "A fast, REPL-based command-line interface that translates natural language to shell commands"
+keywords = ["cli", "repl", "natural-language", "shell", "llm"]
+categories = ["command-line-utilities"]
+
+[workspace.dependencies]
+# Common dependencies will be defined here 
