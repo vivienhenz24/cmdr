@@ -16,7 +16,7 @@ path = "src/main.rs"
 
 [dependencies]
 cmdr-core = { path = "../cmdr-core" }
-# CLI-specific dependencies will be added here
+clap = { version = "4.5.40", default-features = false, features = ["derive", "std"] }
 
 [dev-dependencies]
 # Test dependencies will be added here 
