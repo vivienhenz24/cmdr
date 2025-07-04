@@ -1,5 +1,8 @@
 use clap::Parser;
-use cmdr_core::hello_world;
+use rustyline::error::ReadlineError;
+use rustyline::Editor;
+use rustyline::history::DefaultHistory;
+use std::process;
 
 /// cmdr - A fast, REPL-based command-line interface that translates natural language to shell commands
 /// 
@@ -47,7 +50,7 @@ fn main() {
     // Handle -c/--command fast-path
     if let Some(_command) = args.command {
         println!("(command execution not yet implemented)");
-        std::process::exit(0);
+        process::exit(0);
     }
 
     // Handle --config (placeholder for Phase 2)
@@ -57,10 +60,42 @@ fn main() {
         println!("Configuration loading not yet implemented");
     }
 
-    // Default behavior: Interactive REPL mode (placeholder for Phase 2)
-    println!("Interactive REPL mode (not yet implemented)");
+    // Interactive REPL mode
+    run_repl();
+}
+
+fn run_repl() {
+    let mut rl = Editor::<(), DefaultHistory>::new().expect("Failed to create line editor");
     
-    // Temporary Phase 1 functionality - will be removed in Phase 2
-    println!("Phase 1 placeholder - calling core library:");
-    hello_world();
+    loop {
+        let readline = rl.readline("[cmdr] ");
+        
+        match readline {
+            Ok(line) => {
+                // Add line to history
+                let _ = rl.add_history_entry(line.as_str());
+                
+                // Handle non-empty lines
+                if !line.trim().is_empty() {
+                    println!("(REPL not yet implemented): {}", line);
+                }
+            }
+            Err(ReadlineError::Interrupted) => {
+                // Ctrl-C: abort current line and continue
+                println!();
+                continue;
+            }
+            Err(ReadlineError::Eof) => {
+                // Ctrl-D: exit cleanly
+                break;
+            }
+            Err(err) => {
+                eprintln!("Error: {}", err);
+                break;
+            }
+        }
+    }
+    
+    // Clean exit
+    process::exit(0);
 }
