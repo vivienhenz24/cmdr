@@ -6,6 +6,9 @@ members = [
     "crates/cmdr-config",
     "crates/cmdr-plugin",
 ]
+exclude = [
+    "tools/benchmark",
+]
 resolver = "2"
 
 [workspace.package]
