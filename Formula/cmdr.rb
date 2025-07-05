@@ -9,8 +9,16 @@ class Cmdr < Formula
   depends_on "rust" => :build
 
   def install
-    system "cargo", "install", "--path", "cmdr-cli", "--bin", "cmdr"
+    system "cargo", "build", "--release", "--bin", "cmdr"
     bin.install "target/release/cmdr"
+  end
+
+  def post_install
+    # Run the LLM installation after cmdr is installed
+    system "#{bin}/cmdr", "install", "--skip-checks"
+  rescue => e
+    opoo "Failed to install LLM dependencies: #{e.message}"
+    opoo "You can manually install them later with: #{bin}/cmdr install"
   end
 
   test do

@@ -4,6 +4,7 @@
 
 use std::ffi::{c_char, c_int, c_void};
 
+#[cfg(feature = "native-llama")]
 #[link(name = "llama")]
 extern "C" {
     // TODO: Add actual llama.cpp function bindings
@@ -32,4 +33,19 @@ extern "C" {
         n_past: c_int,
         n_threads: c_int,
     ) -> c_int;
+}
+
+#[cfg(not(feature = "native-llama"))]
+pub mod dummy {
+    use super::*;
+    #[allow(dead_code, unused_variables)]
+    pub unsafe fn llama_backend_init(_numa: bool) -> c_int { 0 }
+    #[allow(dead_code)]
+    pub unsafe fn llama_backend_free() {}
+    #[allow(dead_code, unused_variables)]
+    pub unsafe fn llama_load_model_from_file(_path_model: *const c_char, _params: *const c_void) -> *mut c_void { std::ptr::null_mut() }
+    #[allow(dead_code, unused_variables)]
+    pub unsafe fn llama_new_context_with_model(_model: *const c_void, _params: *const c_void) -> *mut c_void { std::ptr::null_mut() }
+    #[allow(dead_code, unused_variables)]
+    pub unsafe fn llama_eval(_ctx: *mut c_void, _tokens: *const i32, _n_tokens: c_int, _n_past: c_int, _n_threads: c_int) -> c_int { 0 }
 } 

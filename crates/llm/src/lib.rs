@@ -4,8 +4,17 @@
 //! for local LLM inference in cmdr.
 
 mod bindings;
+pub mod install;
 
+#[cfg(feature = "native-llama")]
 pub use bindings::*;
+
+#[cfg(not(feature = "native-llama"))]
+pub mod llama_stub {
+    // Provide dummy exports if needed
+}
+
+pub use install::LlmInstaller;
 
 /// Error type for LLM operations
 #[derive(Debug, thiserror::Error)]
