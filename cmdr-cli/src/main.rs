@@ -55,7 +55,7 @@ fn main() {
 
     // Handle --config (placeholder for Phase 2)
     if let Some(config_file) = args.config {
-        println!("Configuration file specified: {}", config_file);
+        println!("Configuration file specified: {config_file}");
         // TODO: Implement configuration file parsing in Phase 2
         println!("Configuration loading not yet implemented");
     }
@@ -77,7 +77,7 @@ fn run_repl() {
 
                 // Handle non-empty lines
                 if !line.trim().is_empty() {
-                    println!("(REPL not yet implemented): {}", line);
+                    println!("(REPL not yet implemented): {line}");
                 }
             }
             Err(ReadlineError::Interrupted) => {
@@ -90,7 +90,7 @@ fn run_repl() {
                 break;
             }
             Err(err) => {
-                eprintln!("Error: {}", err);
+                eprintln!("Error: {err}");
                 break;
             }
         }
