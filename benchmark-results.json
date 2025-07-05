@@ -1,0 +1,43 @@
+{
+  "name": "cmdr-benchmark",
+  "results": [
+    {
+      "name": "translation_engine_init",
+      "duration": {
+        "secs": 0,
+        "nanos": 42
+      },
+      "iterations": 100,
+      "throughput": 2380952380.952381,
+      "memory_usage": null,
+      "metadata": {}
+    },
+    {
+      "name": "shell_executor_init",
+      "duration": {
+        "secs": 0,
+        "nanos": 42
+      },
+      "iterations": 100,
+      "throughput": 2380952380.952381,
+      "memory_usage": null,
+      "metadata": {}
+    },
+    {
+      "name": "command_parsing",
+      "duration": {
+        "secs": 0,
+        "nanos": 11916
+      },
+      "iterations": 100,
+      "throughput": 8392077.878482712,
+      "memory_usage": null,
+      "metadata": {}
+    }
+  ],
+  "total_duration": {
+    "secs": 0,
+    "nanos": 30500
+  },
+  "timestamp": "2025-07-05T08:43:27.322334Z"
+}
