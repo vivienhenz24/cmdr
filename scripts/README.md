@@ -8,12 +8,35 @@ This directory contains organized test scripts and utilities for the cmdr projec
 scripts/
 ├── README.md              # This file
 ├── run_tests.sh           # Master test runner
+├── setup-git-hooks.sh     # Git hooks setup script
+├── git-hooks/             # Git hooks templates
+│   ├── pre-commit         # Check-only pre-commit hook
+│   └── pre-commit-auto-format  # Auto-format pre-commit hook
 └── test/                  # Test suites
     ├── build_verification.sh    # Build and dependency tests
     ├── cli_interface.sh         # CLI argument parsing tests
     ├── repl_behavior.sh         # REPL interactive behavior tests
     └── file_descriptors.sh      # File descriptor leak tests
 ```
+
+## Git Hooks Setup
+
+To prevent formatting and code quality issues, you can install pre-commit hooks:
+
+```bash
+./scripts/setup-git-hooks.sh
+```
+
+This will prompt you to choose between:
+1. **Check-only hook** (recommended) - Validates formatting without changing files
+2. **Auto-format hook** - Automatically formats code before commit
+
+The hooks will run:
+- `cargo fmt --check` - Ensures code is properly formatted
+- `cargo check` - Validates compilation
+- `cargo clippy` - Checks for code quality issues
+
+If any check fails, the commit will be aborted.
 
 ## Test Categories
 

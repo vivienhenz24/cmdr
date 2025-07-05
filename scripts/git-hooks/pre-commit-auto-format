@@ -1,12 +1,15 @@
 #!/bin/sh
 
-# Run cargo fmt check
-cargo fmt --check
+# Auto-format code with cargo fmt
+echo "Running cargo fmt to format code..."
+cargo fmt
 if [ $? -ne 0 ]; then
-  echo "Code formatting check failed! Please run 'cargo fmt' to format your code."
-  echo "Commit aborted."
+  echo "cargo fmt failed! Commit aborted."
   exit 1
 fi
+
+# Add any formatted files to the commit
+git add -A
 
 # Run cargo check
 cargo check
