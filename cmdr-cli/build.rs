@@ -30,7 +30,7 @@ fn main() {
         format!("{}-{}", env::var("CARGO_PKG_VERSION").unwrap(), git_hash)
     };
 
-    println!("cargo:rustc-env=CMDR_VERSION={}", version);
+    println!("cargo:rustc-env=CMDR_VERSION={version}");
     println!("cargo:rerun-if-changed=.git/HEAD");
     println!("cargo:rerun-if-changed=.git/index");
 }
