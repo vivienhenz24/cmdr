@@ -137,7 +137,7 @@ dependencies = [
 
 [[package]]
 name = "cmdr-cli"
-version = "1.0.0"
+version = "1.0.0-alpha"
 dependencies = [
  "anyhow",
  "clap",
@@ -149,7 +149,7 @@ dependencies = [
 
 [[package]]
 name = "cmdr-config"
-version = "1.0.0"
+version = "1.0.0-alpha"
 dependencies = [
  "anyhow",
  "num_cpus",
@@ -160,7 +160,7 @@ dependencies = [
 
 [[package]]
 name = "cmdr-core"
-version = "1.0.0"
+version = "1.0.0-alpha"
 dependencies = [
  "async-trait",
  "serde",
@@ -169,7 +169,7 @@ dependencies = [
 
 [[package]]
 name = "cmdr-plugin"
-version = "1.0.0"
+version = "1.0.0-alpha"
 dependencies = [
  "anyhow",
  "libloading",
@@ -298,7 +298,7 @@ checksum = "cd945864f07fe9f5371a27ad7b52a172b4b499999f1d97574c9fa68373937e12"
 
 [[package]]
 name = "llm"
-version = "1.0.0"
+version = "1.0.0-alpha"
 dependencies = [
  "cc",
  "libc",

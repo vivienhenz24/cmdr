@@ -10,11 +10,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        target:
-          - x86_64-unknown-linux-gnu
-          - x86_64-apple-darwin
-          - x86_64-pc-windows-msvc
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact_name: cmdr-linux-x86_64
+            binary_name: cmdr
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact_name: cmdr-macos-x86_64
+            binary_name: cmdr
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact_name: cmdr-windows-x86_64
+            binary_name: cmdr.exe
 
     steps:
     - uses: actions/checkout@v4
@@ -28,19 +36,13 @@ jobs:
     - name: Build
       run: |
         cargo build --release --bin cmdr
-        if [ "$RUNNER_OS" = "Windows" ]; then
-          cp target/release/cmdr.exe cmdr-windows-x86_64.exe
-        else
-          cp target/release/cmdr cmdr-${{ runner.os }}-x86_64
-        fi
+        cp target/release/${{ matrix.binary_name }} ${{ matrix.artifact_name }}
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: cmdr-${{ runner.os }}-x86_64
-        path: |
-          cmdr-${{ runner.os }}-x86_64*
-          target/release/cmdr*
+        name: ${{ matrix.artifact_name }}
+        path: ${{ matrix.artifact_name }}
 
   release:
     needs: build
@@ -55,9 +57,9 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          cmdr-ubuntu-latest-x86_64/cmdr-ubuntu-latest-x86_64
-          cmdr-macos-latest-x86_64/cmdr-macos-latest-x86_64
-          cmdr-windows-latest-x86_64/cmdr-windows-x86_64.exe
+          cmdr-linux-x86_64/cmdr-linux-x86_64
+          cmdr-macos-x86_64/cmdr-macos-x86_64
+          cmdr-windows-x86_64/cmdr-windows-x86_64
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
