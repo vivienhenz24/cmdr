@@ -213,8 +213,8 @@ fn handle_install_command(skip_checks: bool, force: bool) -> anyhow::Result<()> 
     let model_status = installer.model_status()?;
 
     println!("Current Status:");
-    println!("  Ollama: {:?}", ollama_status);
-    println!("  Llama 3.2 3B: {:?}\n", model_status);
+    println!("  Ollama: {ollama_status:?}");
+    println!("  Llama 3.2 3B: {model_status:?}\n");
 
     // Install if needed or forced
     if force || ollama_status == llm::install::InstallStatus::NotInstalled {
