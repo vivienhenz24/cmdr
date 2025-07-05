@@ -53,14 +53,13 @@ impl OllamaInstaller {
             .stderr(Stdio::piped())
             .output()
             .map_err(|e| {
-                InstallError::OllamaInstall(format!("Failed to download install script: {}", e))
+                InstallError::OllamaInstall(format!("Failed to download install script: {e}"))
             })?;
 
         if !output.status.success() {
             let error = String::from_utf8_lossy(&output.stderr);
             return Err(InstallError::OllamaInstall(format!(
-                "Failed to download install script: {}",
-                error
+                "Failed to download install script: {error}",
             )));
         }
 
@@ -72,14 +71,13 @@ impl OllamaInstaller {
             .stderr(Stdio::piped())
             .output()
             .map_err(|e| {
-                InstallError::OllamaInstall(format!("Failed to execute install script: {}", e))
+                InstallError::OllamaInstall(format!("Failed to execute install script: {e}"))
             })?;
 
         if !output.status.success() {
             let error = String::from_utf8_lossy(&output.stderr);
             return Err(InstallError::OllamaInstall(format!(
-                "Installation failed: {}",
-                error
+                "Installation failed: {error}",
             )));
         }
 
@@ -107,7 +105,7 @@ impl OllamaInstaller {
                 .stderr(Stdio::null())
                 .spawn()
                 .map_err(|e| {
-                    InstallError::OllamaInstall(format!("Failed to start Ollama service: {}", e))
+                    InstallError::OllamaInstall(format!("Failed to start Ollama service: {e}"))
                 })?;
 
             // Give it a moment to start
@@ -177,9 +175,7 @@ impl OllamaInstaller {
                 .stdout(Stdio::piped())
                 .stderr(Stdio::piped())
                 .output()
-                .map_err(|e| {
-                    InstallError::OllamaInstall(format!("Failed to get version: {}", e))
-                })?;
+                .map_err(|e| InstallError::OllamaInstall(format!("Failed to get version: {e}")))?;
 
             if output.status.success() {
                 let version = String::from_utf8_lossy(&output.stdout).trim().to_string();

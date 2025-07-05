@@ -74,12 +74,12 @@ impl ModelInstaller {
             .stderr(Stdio::inherit())
             .spawn()
             .map_err(|e| {
-                InstallError::ModelDownload(format!("Failed to start model download: {}", e))
+                InstallError::ModelDownload(format!("Failed to start model download: {e}"))
             })?;
 
         // Wait for the download to complete
         let status = child.wait().map_err(|e| {
-            InstallError::ModelDownload(format!("Failed to wait for download: {}", e))
+            InstallError::ModelDownload(format!("Failed to wait for download: {e}"))
         })?;
 
         if !status.success() {
@@ -128,7 +128,7 @@ impl ModelInstaller {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .output()
-            .map_err(|e| InstallError::ModelVerification(format!("Failed to test model: {}", e)))?;
+            .map_err(|e| InstallError::ModelVerification(format!("Failed to test model: {e}")))?;
 
         if output.status.success() {
             let response = String::from_utf8_lossy(&output.stdout).trim().to_string();
@@ -136,8 +136,7 @@ impl ModelInstaller {
         } else {
             let error = String::from_utf8_lossy(&output.stderr);
             Err(InstallError::ModelVerification(format!(
-                "Model test failed: {}",
-                error
+                "Model test failed: {error}",
             )))
         }
     }
@@ -155,7 +154,7 @@ impl ModelInstaller {
             .stderr(Stdio::piped())
             .output()
             .map_err(|e| {
-                InstallError::ModelVerification(format!("Failed to get model info: {}", e))
+                InstallError::ModelVerification(format!("Failed to get model info: {e}"))
             })?;
 
         if output.status.success() {
@@ -164,8 +163,7 @@ impl ModelInstaller {
         } else {
             let error = String::from_utf8_lossy(&output.stderr);
             Err(InstallError::ModelVerification(format!(
-                "Failed to get model info: {}",
-                error
+                "Failed to get model info: {error}",
             )))
         }
     }
@@ -189,13 +187,12 @@ impl ModelInstaller {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .output()
-            .map_err(|e| InstallError::ModelDownload(format!("Failed to remove model: {}", e)))?;
+            .map_err(|e| InstallError::ModelDownload(format!("Failed to remove model: {e}")))?;
 
         if !output.status.success() {
             let error = String::from_utf8_lossy(&output.stderr);
             return Err(InstallError::ModelDownload(format!(
-                "Failed to remove model: {}",
-                error
+                "Failed to remove model: {error}",
             )));
         }
 
@@ -243,9 +240,7 @@ impl ModelInstaller {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .output()
-            .map_err(|e| {
-                InstallError::ModelVerification(format!("Failed to list models: {}", e))
-            })?;
+            .map_err(|e| InstallError::ModelVerification(format!("Failed to list models: {e}")))?;
 
         if output.status.success() {
             let models = String::from_utf8_lossy(&output.stdout).trim().to_string();
@@ -253,8 +248,7 @@ impl ModelInstaller {
         } else {
             let error = String::from_utf8_lossy(&output.stderr);
             Err(InstallError::ModelVerification(format!(
-                "Failed to list models: {}",
-                error
+                "Failed to list models: {error}",
             )))
         }
     }

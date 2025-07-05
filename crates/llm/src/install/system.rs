@@ -197,9 +197,7 @@ impl SystemChecker {
                 .args(["-k", path])
                 .stdout(std::process::Stdio::piped())
                 .output()
-                .map_err(|e| {
-                    InstallError::SystemCheck(format!("Failed to get disk space: {}", e))
-                })?;
+                .map_err(|e| InstallError::SystemCheck(format!("Failed to get disk space: {e}")))?;
 
             if output.status.success() {
                 let output_str = String::from_utf8_lossy(&output.stdout);
@@ -223,9 +221,7 @@ impl SystemChecker {
                 .args(["-B1", path])
                 .stdout(std::process::Stdio::piped())
                 .output()
-                .map_err(|e| {
-                    InstallError::SystemCheck(format!("Failed to get disk space: {}", e))
-                })?;
+                .map_err(|e| InstallError::SystemCheck(format!("Failed to get disk space: {e}")))?;
 
             if output.status.success() {
                 let output_str = String::from_utf8_lossy(&output.stdout);
@@ -285,11 +281,11 @@ impl SystemChecker {
         info.push_str(&format!("Architecture: {}\n", env::consts::ARCH));
 
         if let Ok(memory_gb) = self.get_memory_gb() {
-            info.push_str(&format!("Memory: {}GB\n", memory_gb));
+            info.push_str(&format!("Memory: {memory_gb}GB\n"));
         }
 
         if let Ok(disk_gb) = self.get_disk_gb() {
-            info.push_str(&format!("Available disk space: {}GB\n", disk_gb));
+            info.push_str(&format!("Available disk space: {disk_gb}GB\n"));
         }
 
         Ok(info)
