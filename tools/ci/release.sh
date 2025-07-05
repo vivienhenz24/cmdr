@@ -60,7 +60,7 @@ build_release() {
     
     # Clean and build
     cargo clean
-    cargo build --release
+    cargo build --release --bin cmdr --no-default-features
     
     # Create distribution directory
     rm -rf "$DIST_DIR"
