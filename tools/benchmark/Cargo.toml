@@ -11,4 +11,5 @@ serde_json = "1.0"
 anyhow = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4.0", features = ["derive"] }
-cmdr-core = { path = "../../crates/cmdr-core" } 
+cmdr-core = { path = "../../crates/cmdr-core" }
+tokio = { version = "1.0", features = ["full"] } 
