@@ -8,6 +8,7 @@ members = [
 ]
 exclude = [
     "tools/benchmark",
+    "tools/fuzz",
 ]
 resolver = "2"
 

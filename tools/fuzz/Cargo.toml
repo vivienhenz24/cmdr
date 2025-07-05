@@ -12,4 +12,8 @@ anyhow = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4.0", features = ["derive"] }
 rand = "0.8"
-cmdr-core = { path = "../../crates/cmdr-core" } 
+cmdr-core = { path = "../../crates/cmdr-core" }
+
+[[bin]]
+name = "cmdr-fuzz"
+path = "src/main.rs" 
