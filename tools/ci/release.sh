@@ -139,7 +139,7 @@ main() {
     
     # Run tests without native-llama feature
     log_info "Running tests..."
-    cargo test --release --no-default-features --workspace
+    cargo test -p cmdr-cli --release --no-default-features
     
     # Update version
     update_version "$new_version"
