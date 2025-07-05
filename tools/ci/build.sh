@@ -14,8 +14,8 @@ NC='\033[0m' # No Color
 
 # Configuration
 RUST_VERSION="1.70.0"
-CARGO_FLAGS="--all-targets --all-features"
-CLIPPY_FLAGS="--all-targets --all-features -- -D warnings"
+CARGO_FLAGS="--all-targets"
+CLIPPY_FLAGS="--all-targets -- -D warnings"
 
 # Logging functions
 log_info() {

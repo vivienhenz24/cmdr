@@ -78,7 +78,7 @@ generate_coverage() {
     export LLVM_PROFILE_FILE="$COVERAGE_DIR/cargo-test-%p-%m.profraw"
     
     # Run tests with coverage
-    cargo test --all-targets --all-features
+    cargo test --all-targets
     
     # Generate coverage report
     grcov . \

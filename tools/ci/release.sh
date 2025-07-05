@@ -139,9 +139,8 @@ main() {
     
     # Run tests without native-llama feature
     log_info "Running tests..."
-    # Skip tests for now due to native-llama linking issues
-    # cargo test -p cmdr-cli --release --no-default-features
-    log_warning "Skipping tests due to native-llama linking issues"
+    cargo test -p cmdr-cli --release --no-default-features
+    log_success "Tests passed"
     
     # Update version
     update_version "$new_version"
