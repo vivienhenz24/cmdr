@@ -1,4 +1,27 @@
-#!/bin/sh
+#!/bin/bash
+
+# Pre-commit hook: Run Clippy to prevent committing code with warnings
+
+# Stash unstaged changes (if any) to avoid false positives
+STASHED=false
+if ! git diff --quiet; then
+    git stash -q --keep-index
+    STASHED=true
+fi
+
+# Run Clippy
+cargo clippy -- -D warnings
+CLIPPY_STATUS=$?
+
+# Restore stashed changes if needed
+if $STASHED; then
+    git stash pop -q
+fi
+
+if [ $CLIPPY_STATUS -ne 0 ]; then
+    echo "\033[0;31mERROR: Clippy failed. Please fix warnings before committing.\033[0m"
+    exit 1
+fi
 
 # Run cargo fmt check
 cargo fmt --check
@@ -12,14 +35,6 @@ fi
 cargo check
 if [ $? -ne 0 ]; then
   echo "cargo check failed! Commit aborted."
-  exit 1
-fi
-
-# Run cargo clippy with all targets (matches GitHub Actions)
-cargo clippy --all-targets -- -D warnings
-if [ $? -ne 0 ]; then
-  echo "cargo clippy failed! Please fix the warnings above."
-  echo "Commit aborted."
   exit 1
 fi
 

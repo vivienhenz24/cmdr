@@ -76,7 +76,7 @@ fn main() {
                 match handle_install_command(skip_checks, force) {
                     Ok(_) => process::exit(0),
                     Err(e) => {
-                        eprintln!("Installation error: {}", e);
+                        eprintln!("Installation error: {e}");
                         process::exit(1);
                     }
                 }
@@ -84,7 +84,7 @@ fn main() {
             Commands::Status => match handle_status_command() {
                 Ok(_) => process::exit(0),
                 Err(e) => {
-                    eprintln!("Status check error: {}", e);
+                    eprintln!("Status check error: {e}");
                     process::exit(1);
                 }
             },
@@ -98,7 +98,7 @@ fn main() {
         match execute_single_command(&command) {
             Ok(_) => process::exit(0),
             Err(e) => {
-                eprintln!("Error: {}", e);
+                eprintln!("Error: {e}");
                 process::exit(1);
             }
         }
@@ -132,15 +132,15 @@ fn execute_single_command(natural_language: &str) -> anyhow::Result<()> {
     let command =
         tokio::runtime::Runtime::new()?.block_on(translation_engine.translate(request))?;
 
-    println!("Translated command: {}", command.command);
+    println!("Translated command: {command:?}");
 
     let result = shell_executor.execute(&command)?;
     if result.success {
-        println!("{}", result.output);
+        println!("{result:?}");
     } else {
         eprintln!(
-            "Error: {}",
-            result.error.unwrap_or_else(|| "Unknown error".to_string())
+            "Error: {err}",
+            err = result.error.unwrap_or_else(|| "Unknown error".to_string())
         );
     }
 
@@ -192,7 +192,7 @@ fn handle_install_command(skip_checks: bool, force: bool) -> anyhow::Result<()> 
     // Show system information
     if let Ok(system_info) = installer.system_checker().get_system_info() {
         println!("System Information:");
-        println!("{}", system_info);
+        println!("{system_info}");
     }
 
     // Check system requirements unless skipped
@@ -241,7 +241,7 @@ fn handle_status_command() -> anyhow::Result<()> {
     // Show system information
     if let Ok(system_info) = installer.system_checker().get_system_info() {
         println!("System Information:");
-        println!("{}", system_info);
+        println!("{system_info}");
     }
 
     // Check system requirements
@@ -249,7 +249,7 @@ fn handle_status_command() -> anyhow::Result<()> {
     match installer.check_system() {
         Ok(true) => println!("✓ All requirements met"),
         Ok(false) => println!("❌ Some requirements not met"),
-        Err(e) => println!("⚠️  Could not check requirements: {}", e),
+        Err(e) => println!("⚠️  Could not check requirements: {e}"),
     }
     println!();
 
@@ -263,7 +263,7 @@ fn handle_status_command() -> anyhow::Result<()> {
                     println!("  Path: {}", path.display());
                 }
                 if let Ok(version) = installer.ollama_installer().version() {
-                    println!("  Version: {}", version);
+                    println!("  Version: {version}");
                 }
             }
             llm::install::InstallStatus::NotInstalled => {
@@ -273,10 +273,10 @@ fn handle_status_command() -> anyhow::Result<()> {
                 println!("⏳ Ollama is currently installing");
             }
             llm::install::InstallStatus::Failed(reason) => {
-                println!("❌ Ollama installation failed: {}", reason);
+                println!("❌ Ollama installation failed: {reason}");
             }
         },
-        Err(e) => println!("⚠️  Could not check Ollama status: {}", e),
+        Err(e) => println!("⚠️  Could not check Ollama status: {e}"),
     }
     println!();
 
@@ -295,10 +295,10 @@ fn handle_status_command() -> anyhow::Result<()> {
                 println!("⏳ Llama 3.2 3B is currently installing");
             }
             llm::install::InstallStatus::Failed(reason) => {
-                println!("❌ Llama 3.2 3B installation failed: {}", reason);
+                println!("❌ Llama 3.2 3B installation failed: {reason}");
             }
         },
-        Err(e) => println!("⚠️  Could not check model status: {}", e),
+        Err(e) => println!("⚠️  Could not check model status: {e}"),
     }
 
     Ok(())
