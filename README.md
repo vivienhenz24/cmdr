@@ -5,14 +5,14 @@ cmdr is a fast, REPL-based command-line interface written in Rust that lets user
 ### Homebrew (macOS and Linux)
 
 ```bash
-brew tap cmdr-project/cmdr
+brew tap vivienhenz24/cmdr
 brew install cmdr
 ```
 
 ### From Source
 
 ```bash
-git clone https://github.com/cmdr-project/cmdr.git
+git clone https://github.com/vivienhenz24/cmdr.git
 cd cmdr
 cargo install --path cmdr-cli
 ```
