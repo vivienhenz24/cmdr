@@ -63,7 +63,7 @@ impl InferenceEngine for MockInferenceEngine {
         }
 
         // Return a mock response based on the prompt
-        Ok(format!("Mock response to: {}", prompt))
+        Ok(format!("Mock response to: {prompt}"))
     }
 
     fn set_parameters(&mut self, _temperature: f32, _max_tokens: usize) -> InferenceResult<()> {

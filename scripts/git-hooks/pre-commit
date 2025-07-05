@@ -15,10 +15,11 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# Run cargo clippy
+# Run cargo clippy with all targets (matches GitHub Actions)
 cargo clippy --all-targets -- -D warnings
 if [ $? -ne 0 ]; then
-  echo "cargo clippy failed! Commit aborted."
+  echo "cargo clippy failed! Please fix the warnings above."
+  echo "Commit aborted."
   exit 1
 fi
 

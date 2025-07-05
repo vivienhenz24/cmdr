@@ -29,7 +29,7 @@ impl PromptTemplate {
         let mut result = self.template.clone();
 
         for (name, value) in &self.variables {
-            let placeholder = format!("{{{{{}}}}}", name);
+            let placeholder = format!("{{{{{name}}}}}");
             result = result.replace(&placeholder, value);
         }
 
