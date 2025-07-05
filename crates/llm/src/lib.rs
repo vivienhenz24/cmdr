@@ -3,8 +3,10 @@
 //! This crate provides safe Rust bindings to the llama.cpp C API
 //! for local LLM inference in cmdr.
 
-mod bindings;
 pub mod install;
+
+#[cfg(feature = "native-llama")]
+mod bindings;
 
 #[cfg(feature = "native-llama")]
 pub use bindings::*;
