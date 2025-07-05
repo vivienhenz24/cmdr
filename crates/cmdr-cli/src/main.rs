@@ -4,6 +4,9 @@ use rustyline::history::DefaultHistory;
 use rustyline::Editor;
 use std::process;
 
+use cmdr_core::{TranslationEngine, MockInferenceEngine, ShellExecutor, NaturalLanguageRequest};
+use cmdr_core::InferenceEngine;
+
 /// cmdr - A fast, REPL-based command-line interface that translates natural language to shell commands
 ///
 /// Phase 1 CLI Interface Contract:
@@ -48,9 +51,14 @@ fn main() {
     // Fast-path execution logic for mature UNIX tool behavior
 
     // Handle -c/--command fast-path
-    if let Some(_command) = args.command {
-        println!("(command execution not yet implemented)");
-        process::exit(0);
+    if let Some(command) = args.command {
+        match execute_single_command(&command) {
+            Ok(_) => process::exit(0),
+            Err(e) => {
+                eprintln!("Error: {}", e);
+                process::exit(1);
+            }
+        }
     }
 
     // Handle --config (placeholder for Phase 2)
@@ -62,6 +70,36 @@ fn main() {
 
     // Interactive REPL mode
     run_repl();
+}
+
+fn execute_single_command(natural_language: &str) -> anyhow::Result<()> {
+    let mut inference_engine = MockInferenceEngine::new();
+    inference_engine.initialize()?;
+    inference_engine.load_model("mock-model")?;
+    
+    let mut translation_engine = TranslationEngine::new(inference_engine);
+    let shell_executor = ShellExecutor::default();
+    
+    let request = NaturalLanguageRequest {
+        text: natural_language.to_string(),
+        context: None,
+    };
+    
+    // TODO: Make this async when we have proper async runtime
+    let command = tokio::runtime::Runtime::new()?.block_on(
+        translation_engine.translate(request)
+    )?;
+    
+    println!("Translated command: {}", command.command);
+    
+    let result = shell_executor.execute(&command)?;
+    if result.success {
+        println!("{}", result.output);
+    } else {
+        eprintln!("Error: {}", result.error.unwrap_or_else(|| "Unknown error".to_string()));
+    }
+    
+    Ok(())
 }
 
 fn run_repl() {

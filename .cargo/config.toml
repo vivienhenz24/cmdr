@@ -1,0 +1,20 @@
+[build]
+# Set the target directory to be relative to the workspace root
+target-dir = "target"
+
+[profile.release]
+# Optimize for size and speed
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+# Faster compilation for development
+opt-level = 0
+debug = true
+
+[profile.test]
+# Optimize tests for speed
+opt-level = 1
+debug = true 

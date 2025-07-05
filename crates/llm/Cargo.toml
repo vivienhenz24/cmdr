@@ -1,0 +1,18 @@
+[package]
+name = "llm"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "llama.cpp FFI bindings for cmdr"
+keywords = ["llm", "llama", "inference", "ffi"]
+categories = ["api-bindings"]
+
+[dependencies]
+libc = "0.2"
+thiserror = "1.0"
+
+[build-dependencies]
+cc = "1.0" 

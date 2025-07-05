@@ -18,6 +18,8 @@ path = "src/main.rs"
 cmdr-core = { path = "../cmdr-core" }
 clap = { version = "4.5.40", default-features = false, features = ["derive", "std", "help"] }
 rustyline = "13.0"
+anyhow = "1.0"
+tokio = { version = "1.0", features = ["full"] }
 
 [dev-dependencies]
 # Test dependencies will be added here 

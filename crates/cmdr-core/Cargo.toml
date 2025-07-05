@@ -11,7 +11,9 @@ keywords.workspace = true
 categories.workspace = true
 
 [dependencies]
-# Core dependencies will be added here
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+async-trait = "0.1"
 
 [dev-dependencies]
 # Test dependencies will be added here 

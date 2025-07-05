@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Run cargo check
+cargo check
+if [ $? -ne 0 ]; then
+  echo "cargo check failed! Commit aborted."
+  exit 1
+fi
+
+# Run cargo clippy
+cargo clippy --all-targets --all-features -- -D warnings
+if [ $? -ne 0 ]; then
+  echo "cargo clippy failed! Commit aborted."
+  exit 1
+fi
+
+echo "All checks passed. Proceeding with commit."
+exit 0 

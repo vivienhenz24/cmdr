@@ -1,0 +1,15 @@
+[package]
+name = "cmdr-plugin"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Plugin system for cmdr"
+keywords = ["plugin", "extensibility", "dynamic-loading"]
+categories = ["api-bindings"]
+
+[dependencies]
+libloading = "0.8"
+anyhow = "1.0" 

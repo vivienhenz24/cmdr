@@ -1,7 +1,10 @@
 [workspace]
 members = [
-    "cmdr-core",
-    "cmdr-cli",
+    "crates/cmdr-cli",
+    "crates/cmdr-core",
+    "crates/llm",
+    "crates/cmdr-config",
+    "crates/cmdr-plugin",
 ]
 resolver = "2"
 
