@@ -137,6 +137,10 @@ main() {
     log_info "Running CI checks..."
     ./tools/ci/build.sh
     
+    # Run tests without native-llama feature
+    log_info "Running tests..."
+    cargo test --no-default-features
+    
     # Update version
     update_version "$new_version"
     
