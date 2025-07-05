@@ -1,5 +1,5 @@
 //! Natural language translation module
-//! 
+//!
 //! This module handles translating natural language requests into shell commands.
 
 mod engine;
@@ -7,7 +7,6 @@ mod prompt;
 
 pub use engine::TranslationEngine;
 pub use prompt::PromptTemplate;
-
 
 /// Error type for translation operations
 #[derive(Debug, thiserror::Error)]
@@ -21,4 +20,4 @@ pub enum TranslationError {
 }
 
 /// Result type for translation operations
-pub type TranslationResult<T> = Result<T, TranslationError>; 
+pub type TranslationResult<T> = Result<T, TranslationError>;

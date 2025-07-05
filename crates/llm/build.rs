@@ -10,4 +10,4 @@ fn main() {
         // The crate will work with Ollama-based installation instead
         println!("cargo:rerun-if-changed=build.rs");
     }
-} 
+}

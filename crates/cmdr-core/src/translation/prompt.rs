@@ -1,5 +1,5 @@
 //! Prompt template management
-//! 
+//!
 //! This module handles prompt templates for different types of requests.
 
 use std::collections::HashMap;
@@ -18,21 +18,21 @@ impl PromptTemplate {
             variables: HashMap::new(),
         }
     }
-    
+
     /// Set a variable in the template
     pub fn set_variable(&mut self, name: &str, value: String) {
         self.variables.insert(name.to_string(), value);
     }
-    
+
     /// Render the template with the current variables
     pub fn render(&self) -> String {
         let mut result = self.template.clone();
-        
+
         for (name, value) in &self.variables {
             let placeholder = format!("{{{{{}}}}}", name);
             result = result.replace(&placeholder, value);
         }
-        
+
         result
     }
 }
@@ -63,4 +63,4 @@ User request: {request}
 
 Shell command:"#.to_string()
     }
-} 
+}

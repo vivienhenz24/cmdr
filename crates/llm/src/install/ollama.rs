@@ -1,12 +1,12 @@
 //! Ollama installer module
-//! 
+//!
 //! This module handles the installation and management of Ollama
 //! for local LLM inference.
 
 use super::{InstallError, InstallResult, InstallStatus};
+use std::env;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
-use std::env;
 
 /// Ollama installer that handles installation and management
 pub struct OllamaInstaller {
@@ -43,20 +43,25 @@ impl OllamaInstaller {
         }
 
         println!("Installing Ollama...");
-        
+
         // Use the official Ollama install script
         let install_script = "https://ollama.ai/install.sh";
-        
+
         let output = Command::new("curl")
             .args(["-fsSL", install_script])
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .output()
-            .map_err(|e| InstallError::OllamaInstall(format!("Failed to download install script: {}", e)))?;
+            .map_err(|e| {
+                InstallError::OllamaInstall(format!("Failed to download install script: {}", e))
+            })?;
 
         if !output.status.success() {
             let error = String::from_utf8_lossy(&output.stderr);
-            return Err(InstallError::OllamaInstall(format!("Failed to download install script: {}", error)));
+            return Err(InstallError::OllamaInstall(format!(
+                "Failed to download install script: {}",
+                error
+            )));
         }
 
         // Execute the install script
@@ -66,18 +71,25 @@ impl OllamaInstaller {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .output()
-            .map_err(|e| InstallError::OllamaInstall(format!("Failed to execute install script: {}", e)))?;
+            .map_err(|e| {
+                InstallError::OllamaInstall(format!("Failed to execute install script: {}", e))
+            })?;
 
         if !output.status.success() {
             let error = String::from_utf8_lossy(&output.stderr);
-            return Err(InstallError::OllamaInstall(format!("Installation failed: {}", error)));
+            return Err(InstallError::OllamaInstall(format!(
+                "Installation failed: {}",
+                error
+            )));
         }
 
         // Update binary path after installation
         self.binary_path = Self::find_ollama_binary();
-        
+
         if self.binary_path.is_none() {
-            return Err(InstallError::OllamaInstall("Ollama installed but binary not found in PATH".to_string()));
+            return Err(InstallError::OllamaInstall(
+                "Ollama installed but binary not found in PATH".to_string(),
+            ));
         }
 
         // Start Ollama service
@@ -94,14 +106,18 @@ impl OllamaInstaller {
                 .stdout(Stdio::null())
                 .stderr(Stdio::null())
                 .spawn()
-                .map_err(|e| InstallError::OllamaInstall(format!("Failed to start Ollama service: {}", e)))?;
+                .map_err(|e| {
+                    InstallError::OllamaInstall(format!("Failed to start Ollama service: {}", e))
+                })?;
 
             // Give it a moment to start
             std::thread::sleep(std::time::Duration::from_secs(2));
-            
+
             Ok(())
         } else {
-            Err(InstallError::OllamaInstall("Ollama binary not found".to_string()))
+            Err(InstallError::OllamaInstall(
+                "Ollama binary not found".to_string(),
+            ))
         }
     }
 
@@ -161,16 +177,22 @@ impl OllamaInstaller {
                 .stdout(Stdio::piped())
                 .stderr(Stdio::piped())
                 .output()
-                .map_err(|e| InstallError::OllamaInstall(format!("Failed to get version: {}", e)))?;
+                .map_err(|e| {
+                    InstallError::OllamaInstall(format!("Failed to get version: {}", e))
+                })?;
 
             if output.status.success() {
                 let version = String::from_utf8_lossy(&output.stdout).trim().to_string();
                 Ok(version)
             } else {
-                Err(InstallError::OllamaInstall("Failed to get Ollama version".to_string()))
+                Err(InstallError::OllamaInstall(
+                    "Failed to get Ollama version".to_string(),
+                ))
             }
         } else {
-            Err(InstallError::OllamaInstall("Ollama not installed".to_string()))
+            Err(InstallError::OllamaInstall(
+                "Ollama not installed".to_string(),
+            ))
         }
     }
 }
@@ -187,4 +209,4 @@ mod tests {
     fn test_installer_creation() {
         // This test will pass regardless of whether Ollama is installed
     }
-} 
+}

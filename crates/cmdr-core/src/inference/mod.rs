@@ -1,5 +1,5 @@
 //! LLM inference module
-//! 
+//!
 //! This module provides the interface for different LLM inference engines.
 
 mod engine;
@@ -20,4 +20,4 @@ pub enum InferenceError {
 }
 
 /// Result type for inference operations
-pub type InferenceResult<T> = Result<T, InferenceError>; 
+pub type InferenceResult<T> = Result<T, InferenceError>;

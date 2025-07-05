@@ -1,5 +1,5 @@
 //! llama.cpp FFI bindings for cmdr
-//! 
+//!
 //! This crate provides safe Rust bindings to the llama.cpp C API
 //! for local LLM inference in cmdr.
 
@@ -61,4 +61,4 @@ mod tests {
     fn test_context_creation() {
         let _context = LlmContext::new().expect("Failed to create context");
     }
-} 
+}

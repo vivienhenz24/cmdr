@@ -1,27 +1,27 @@
 //! Core library for cmdr - natural language to shell command translation
-//! 
+//!
 //! This crate provides the core functionality for translating natural language
 //! requests into shell commands using local LLM inference.
 
-pub mod translation;
 pub mod inference;
 pub mod shell;
+pub mod translation;
 
-pub use translation::TranslationEngine;
 pub use inference::{InferenceEngine, MockInferenceEngine};
 pub use shell::ShellExecutor;
+pub use translation::TranslationEngine;
 
 /// Common types used throughout the cmdr ecosystem
 pub mod types {
     use serde::{Deserialize, Serialize};
-    
+
     /// A natural language request from the user
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct NaturalLanguageRequest {
         pub text: String,
         pub context: Option<String>,
     }
-    
+
     /// A translated shell command
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ShellCommand {
@@ -29,7 +29,7 @@ pub mod types {
         pub explanation: Option<String>,
         pub confidence: f32,
     }
-    
+
     /// Result of command execution
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ExecutionResult {

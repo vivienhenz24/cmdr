@@ -1,5 +1,5 @@
 //! System checker module
-//! 
+//!
 //! This module handles checking system requirements for
 //! running Ollama and Llama 3.2 3B.
 
@@ -18,17 +18,14 @@ pub struct SystemRequirements {
 impl Default for SystemRequirements {
     fn default() -> Self {
         Self {
-            min_memory_gb: 4, // 4GB minimum for Llama 3.2 3B
+            min_memory_gb: 4,     // 4GB minimum for Llama 3.2 3B
             min_disk_space_gb: 3, // 3GB for model + Ollama
             supported_architectures: vec![
                 "x86_64".to_string(),
                 "aarch64".to_string(),
                 "arm64".to_string(),
             ],
-            supported_platforms: vec![
-                "darwin".to_string(),
-                "linux".to_string(),
-            ],
+            supported_platforms: vec!["darwin".to_string(), "linux".to_string()],
         }
     }
 }
@@ -73,7 +70,10 @@ impl SystemChecker {
 
         // Check memory
         if !self.check_memory()? {
-            println!("❌ Insufficient memory (need at least {}GB)", self.requirements.min_memory_gb);
+            println!(
+                "❌ Insufficient memory (need at least {}GB)",
+                self.requirements.min_memory_gb
+            );
             all_checks_passed = false;
         } else {
             println!("✓ Sufficient memory available");
@@ -81,7 +81,10 @@ impl SystemChecker {
 
         // Check disk space
         if !self.check_disk_space()? {
-            println!("❌ Insufficient disk space (need at least {}GB)", self.requirements.min_disk_space_gb);
+            println!(
+                "❌ Insufficient disk space (need at least {}GB)",
+                self.requirements.min_disk_space_gb
+            );
             all_checks_passed = false;
         } else {
             println!("✓ Sufficient disk space available");
@@ -101,13 +104,19 @@ impl SystemChecker {
     /// Check if the platform is supported
     fn check_platform(&self) -> InstallResult<bool> {
         let platform = env::consts::OS;
-        Ok(self.requirements.supported_platforms.contains(&platform.to_string()))
+        Ok(self
+            .requirements
+            .supported_platforms
+            .contains(&platform.to_string()))
     }
 
     /// Check if the architecture is supported
     fn check_architecture(&self) -> InstallResult<bool> {
         let arch = env::consts::ARCH;
-        Ok(self.requirements.supported_architectures.contains(&arch.to_string()))
+        Ok(self
+            .requirements
+            .supported_architectures
+            .contains(&arch.to_string()))
     }
 
     /// Check available memory
@@ -115,12 +124,14 @@ impl SystemChecker {
         #[cfg(target_os = "macos")]
         {
             use std::process::Command;
-            
+
             let output = Command::new("sysctl")
                 .args(["-n", "hw.memsize"])
                 .stdout(std::process::Stdio::piped())
                 .output()
-                .map_err(|e| InstallError::SystemCheck(format!("Failed to get memory info: {}", e)))?;
+                .map_err(|e| {
+                    InstallError::SystemCheck(format!("Failed to get memory info: {}", e))
+                })?;
 
             if output.status.success() {
                 let lossy = String::from_utf8_lossy(&output.stdout);
@@ -135,7 +146,7 @@ impl SystemChecker {
         #[cfg(target_os = "linux")]
         {
             use std::fs;
-            
+
             if let Ok(content) = fs::read_to_string("/proc/meminfo") {
                 for line in content.lines() {
                     if line.starts_with("MemTotal:") {
@@ -159,12 +170,7 @@ impl SystemChecker {
         use std::path::Path;
 
         // Check space in common installation directories
-        let paths_to_check = [
-            "/usr/local",
-            "/opt/homebrew",
-            "/opt",
-            "/tmp",
-        ];
+        let paths_to_check = ["/usr/local", "/opt/homebrew", "/opt", "/tmp"];
 
         for path in &paths_to_check {
             if Path::new(path).exists() {
@@ -186,12 +192,14 @@ impl SystemChecker {
         #[cfg(target_os = "macos")]
         {
             use std::process::Command;
-            
+
             let output = Command::new("df")
                 .args(["-k", path])
                 .stdout(std::process::Stdio::piped())
                 .output()
-                .map_err(|e| InstallError::SystemCheck(format!("Failed to get disk space: {}", e)))?;
+                .map_err(|e| {
+                    InstallError::SystemCheck(format!("Failed to get disk space: {}", e))
+                })?;
 
             if output.status.success() {
                 let output_str = String::from_utf8_lossy(&output.stdout);
@@ -210,12 +218,14 @@ impl SystemChecker {
         #[cfg(target_os = "linux")]
         {
             use std::process::Command;
-            
+
             let output = Command::new("df")
                 .args(["-B1", path])
                 .stdout(std::process::Stdio::piped())
                 .output()
-                .map_err(|e| InstallError::SystemCheck(format!("Failed to get disk space: {}", e)))?;
+                .map_err(|e| {
+                    InstallError::SystemCheck(format!("Failed to get disk space: {}", e))
+                })?;
 
             if output.status.success() {
                 let output_str = String::from_utf8_lossy(&output.stdout);
@@ -231,16 +241,18 @@ impl SystemChecker {
             }
         }
 
-        Err(InstallError::SystemCheck("Could not determine available disk space".to_string()))
+        Err(InstallError::SystemCheck(
+            "Could not determine available disk space".to_string(),
+        ))
     }
 
     /// Check network connectivity
     fn check_network(&self) -> InstallResult<bool> {
         use std::process::Command;
-        
+
         // Try to ping a reliable host
         let hosts = ["8.8.8.8", "1.1.1.1", "ollama.ai"];
-        
+
         for host in &hosts {
             let output = Command::new("ping")
                 .args(["-c", "1", "-W", "5", host])
@@ -268,18 +280,18 @@ impl SystemChecker {
     /// Get system information
     pub fn get_system_info(&self) -> InstallResult<String> {
         let mut info = String::new();
-        
+
         info.push_str(&format!("Platform: {}\n", env::consts::OS));
         info.push_str(&format!("Architecture: {}\n", env::consts::ARCH));
-        
+
         if let Ok(memory_gb) = self.get_memory_gb() {
             info.push_str(&format!("Memory: {}GB\n", memory_gb));
         }
-        
+
         if let Ok(disk_gb) = self.get_disk_gb() {
             info.push_str(&format!("Available disk space: {}GB\n", disk_gb));
         }
-        
+
         Ok(info)
     }
 
@@ -288,12 +300,14 @@ impl SystemChecker {
         #[cfg(target_os = "macos")]
         {
             use std::process::Command;
-            
+
             let output = Command::new("sysctl")
                 .args(["-n", "hw.memsize"])
                 .stdout(std::process::Stdio::piped())
                 .output()
-                .map_err(|e| InstallError::SystemCheck(format!("Failed to get memory info: {}", e)))?;
+                .map_err(|e| {
+                    InstallError::SystemCheck(format!("Failed to get memory info: {}", e))
+                })?;
 
             if output.status.success() {
                 let lossy = String::from_utf8_lossy(&output.stdout);
@@ -307,7 +321,7 @@ impl SystemChecker {
         #[cfg(target_os = "linux")]
         {
             use std::fs;
-            
+
             if let Ok(content) = fs::read_to_string("/proc/meminfo") {
                 for line in content.lines() {
                     if line.starts_with("MemTotal:") {
@@ -321,13 +335,15 @@ impl SystemChecker {
             }
         }
 
-        Err(InstallError::SystemCheck("Could not determine memory size".to_string()))
+        Err(InstallError::SystemCheck(
+            "Could not determine memory size".to_string(),
+        ))
     }
 
     /// Get available disk space in GB
     fn get_disk_gb(&self) -> InstallResult<u64> {
         let paths_to_check = ["/usr/local", "/opt/homebrew", "/opt"];
-        
+
         for path in &paths_to_check {
             if std::path::Path::new(path).exists() {
                 if let Ok(available_space) = self.get_available_space(path) {
@@ -336,7 +352,9 @@ impl SystemChecker {
             }
         }
 
-        Err(InstallError::SystemCheck("Could not determine disk space".to_string()))
+        Err(InstallError::SystemCheck(
+            "Could not determine disk space".to_string(),
+        ))
     }
 }
 
@@ -369,4 +387,4 @@ mod tests {
         let result = checker.check_architecture();
         assert!(result.is_ok());
     }
-} 
+}

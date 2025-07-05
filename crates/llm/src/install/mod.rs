@@ -1,14 +1,14 @@
 //! Installation framework for cmdr LLM dependencies
-//! 
+//!
 //! This module handles the automatic installation and setup of
 //! Ollama and Llama 3.2 3B model for local LLM inference.
 
-mod ollama;
 mod model;
+mod ollama;
 mod system;
 
-pub use ollama::OllamaInstaller;
 pub use model::ModelInstaller;
+pub use ollama::OllamaInstaller;
 pub use system::SystemChecker;
 
 use std::path::PathBuf;
@@ -88,11 +88,13 @@ impl LlmInstaller {
     /// Perform a complete installation (Ollama + model)
     pub fn install_all(&mut self) -> InstallResult<()> {
         println!("Starting cmdr LLM installation...");
-        
+
         // Check system requirements
         println!("Checking system requirements...");
         if !self.check_system()? {
-            return Err(InstallError::SystemCheck("System requirements not met".to_string()));
+            return Err(InstallError::SystemCheck(
+                "System requirements not met".to_string(),
+            ));
         }
         println!("✓ System requirements met");
 
@@ -146,4 +148,4 @@ mod tests {
         let installer = LlmInstaller::new();
         assert_eq!(installer.model_name(), "llama3.2:3b");
     }
-} 
+}

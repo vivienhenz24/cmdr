@@ -1,5 +1,5 @@
 //! Configuration management for cmdr
-//! 
+//!
 //! This crate handles loading, parsing, and managing configuration
 //! for the cmdr application.
 
@@ -95,4 +95,4 @@ pub fn save_config(config: &Config, path: &PathBuf) -> anyhow::Result<()> {
     let content = toml::to_string_pretty(config)?;
     std::fs::write(path, content)?;
     Ok(())
-} 
+}

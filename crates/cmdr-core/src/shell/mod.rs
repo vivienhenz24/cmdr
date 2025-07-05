@@ -1,5 +1,5 @@
 //! Shell command execution module
-//! 
+//!
 //! This module handles the execution of shell commands.
 
 mod executor;
@@ -7,7 +7,6 @@ mod parser;
 
 pub use executor::ShellExecutor;
 pub use parser::CommandParser;
-
 
 /// Error type for shell operations
 #[derive(Debug, thiserror::Error)]
@@ -23,4 +22,4 @@ pub enum ShellError {
 }
 
 /// Result type for shell operations
-pub type ShellResult<T> = Result<T, ShellError>; 
+pub type ShellResult<T> = Result<T, ShellError>;

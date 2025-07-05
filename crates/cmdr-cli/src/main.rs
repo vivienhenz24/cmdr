@@ -4,8 +4,8 @@ use rustyline::history::DefaultHistory;
 use rustyline::Editor;
 use std::process;
 
-use cmdr_core::{TranslationEngine, MockInferenceEngine, ShellExecutor, NaturalLanguageRequest};
 use cmdr_core::InferenceEngine;
+use cmdr_core::{MockInferenceEngine, NaturalLanguageRequest, ShellExecutor, TranslationEngine};
 use llm::LlmInstaller;
 
 /// cmdr - A fast, REPL-based command-line interface that translates natural language to shell commands
@@ -56,12 +56,12 @@ enum Commands {
         /// Skip system requirements check
         #[arg(long)]
         skip_checks: bool,
-        
+
         /// Force reinstallation even if already installed
         #[arg(long)]
         force: bool,
     },
-    
+
     /// Check LLM installation status
     Status,
 }
@@ -81,15 +81,13 @@ fn main() {
                     }
                 }
             }
-            Commands::Status => {
-                match handle_status_command() {
-                    Ok(_) => process::exit(0),
-                    Err(e) => {
-                        eprintln!("Status check error: {}", e);
-                        process::exit(1);
-                    }
+            Commands::Status => match handle_status_command() {
+                Ok(_) => process::exit(0),
+                Err(e) => {
+                    eprintln!("Status check error: {}", e);
+                    process::exit(1);
                 }
-            }
+            },
         }
     }
 
@@ -121,29 +119,31 @@ fn execute_single_command(natural_language: &str) -> anyhow::Result<()> {
     let mut inference_engine = MockInferenceEngine::new();
     inference_engine.initialize()?;
     inference_engine.load_model("mock-model")?;
-    
+
     let mut translation_engine = TranslationEngine::new(inference_engine);
     let shell_executor = ShellExecutor::default();
-    
+
     let request = NaturalLanguageRequest {
         text: natural_language.to_string(),
         context: None,
     };
-    
+
     // TODO: Make this async when we have proper async runtime
-    let command = tokio::runtime::Runtime::new()?.block_on(
-        translation_engine.translate(request)
-    )?;
-    
+    let command =
+        tokio::runtime::Runtime::new()?.block_on(translation_engine.translate(request))?;
+
     println!("Translated command: {}", command.command);
-    
+
     let result = shell_executor.execute(&command)?;
     if result.success {
         println!("{}", result.output);
     } else {
-        eprintln!("Error: {}", result.error.unwrap_or_else(|| "Unknown error".to_string()));
+        eprintln!(
+            "Error: {}",
+            result.error.unwrap_or_else(|| "Unknown error".to_string())
+        );
     }
-    
+
     Ok(())
 }
 
@@ -185,63 +185,65 @@ fn run_repl() {
 
 fn handle_install_command(skip_checks: bool, force: bool) -> anyhow::Result<()> {
     let mut installer = LlmInstaller::new();
-    
+
     println!("cmdr LLM Installation");
     println!("====================\n");
-    
+
     // Show system information
     if let Ok(system_info) = installer.system_checker().get_system_info() {
         println!("System Information:");
         println!("{}", system_info);
     }
-    
+
     // Check system requirements unless skipped
     if !skip_checks {
         println!("Checking system requirements...");
         if !installer.check_system()? {
-            return Err(anyhow::anyhow!("System requirements not met. Use --skip-checks to bypass."));
+            return Err(anyhow::anyhow!(
+                "System requirements not met. Use --skip-checks to bypass."
+            ));
         }
         println!("✓ System requirements met\n");
     } else {
         println!("⚠️  Skipping system requirements check\n");
     }
-    
+
     // Check current status
     let ollama_status = installer.ollama_status()?;
     let model_status = installer.model_status()?;
-    
+
     println!("Current Status:");
     println!("  Ollama: {:?}", ollama_status);
     println!("  Llama 3.2 3B: {:?}\n", model_status);
-    
+
     // Install if needed or forced
     if force || ollama_status == llm::install::InstallStatus::NotInstalled {
         installer.install_ollama()?;
     }
-    
+
     if force || model_status == llm::install::InstallStatus::NotInstalled {
         installer.install_model()?;
     }
-    
+
     println!("🎉 Installation completed successfully!");
     println!("\nYou can now use cmdr with local LLM inference.");
     println!("Try: cmdr -c \"list all files in current directory\"");
-    
+
     Ok(())
 }
 
 fn handle_status_command() -> anyhow::Result<()> {
     let installer = LlmInstaller::new();
-    
+
     println!("cmdr LLM Status");
     println!("==============\n");
-    
+
     // Show system information
     if let Ok(system_info) = installer.system_checker().get_system_info() {
         println!("System Information:");
         println!("{}", system_info);
     }
-    
+
     // Check system requirements
     println!("System Requirements:");
     match installer.check_system() {
@@ -250,58 +252,54 @@ fn handle_status_command() -> anyhow::Result<()> {
         Err(e) => println!("⚠️  Could not check requirements: {}", e),
     }
     println!();
-    
+
     // Check Ollama status
     println!("Ollama Status:");
     match installer.ollama_status() {
-        Ok(status) => {
-            match status {
-                llm::install::InstallStatus::Installed => {
-                    println!("✓ Ollama is installed");
-                    if let Some(path) = installer.ollama_path() {
-                        println!("  Path: {}", path.display());
-                    }
-                    if let Ok(version) = installer.ollama_installer().version() {
-                        println!("  Version: {}", version);
-                    }
+        Ok(status) => match status {
+            llm::install::InstallStatus::Installed => {
+                println!("✓ Ollama is installed");
+                if let Some(path) = installer.ollama_path() {
+                    println!("  Path: {}", path.display());
                 }
-                llm::install::InstallStatus::NotInstalled => {
-                    println!("❌ Ollama is not installed");
-                }
-                llm::install::InstallStatus::Installing => {
-                    println!("⏳ Ollama is currently installing");
-                }
-                llm::install::InstallStatus::Failed(reason) => {
-                    println!("❌ Ollama installation failed: {}", reason);
+                if let Ok(version) = installer.ollama_installer().version() {
+                    println!("  Version: {}", version);
                 }
             }
-        }
+            llm::install::InstallStatus::NotInstalled => {
+                println!("❌ Ollama is not installed");
+            }
+            llm::install::InstallStatus::Installing => {
+                println!("⏳ Ollama is currently installing");
+            }
+            llm::install::InstallStatus::Failed(reason) => {
+                println!("❌ Ollama installation failed: {}", reason);
+            }
+        },
         Err(e) => println!("⚠️  Could not check Ollama status: {}", e),
     }
     println!();
-    
+
     // Check model status
     println!("Model Status:");
     match installer.model_status() {
-        Ok(status) => {
-            match status {
-                llm::install::InstallStatus::Installed => {
-                    println!("✓ Llama 3.2 3B is installed");
-                    println!("  Model: {}", installer.model_name());
-                }
-                llm::install::InstallStatus::NotInstalled => {
-                    println!("❌ Llama 3.2 3B is not installed");
-                }
-                llm::install::InstallStatus::Installing => {
-                    println!("⏳ Llama 3.2 3B is currently installing");
-                }
-                llm::install::InstallStatus::Failed(reason) => {
-                    println!("❌ Llama 3.2 3B installation failed: {}", reason);
-                }
+        Ok(status) => match status {
+            llm::install::InstallStatus::Installed => {
+                println!("✓ Llama 3.2 3B is installed");
+                println!("  Model: {}", installer.model_name());
             }
-        }
+            llm::install::InstallStatus::NotInstalled => {
+                println!("❌ Llama 3.2 3B is not installed");
+            }
+            llm::install::InstallStatus::Installing => {
+                println!("⏳ Llama 3.2 3B is currently installing");
+            }
+            llm::install::InstallStatus::Failed(reason) => {
+                println!("❌ Llama 3.2 3B installation failed: {}", reason);
+            }
+        },
         Err(e) => println!("⚠️  Could not check model status: {}", e),
     }
-    
+
     Ok(())
 }

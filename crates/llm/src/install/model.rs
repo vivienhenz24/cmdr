@@ -1,5 +1,5 @@
 //! Model installer module
-//! 
+//!
 //! This module handles the installation and management of
 //! Llama 3.2 3B model via Ollama.
 
@@ -56,10 +56,15 @@ impl ModelInstaller {
             return Ok(());
         }
 
-        let ollama_path = self.ollama_binary.as_ref()
+        let ollama_path = self
+            .ollama_binary
+            .as_ref()
             .ok_or_else(|| InstallError::ModelDownload("Ollama not found".to_string()))?;
 
-        println!("Installing {} model (this may take several minutes)...", self.model_name);
+        println!(
+            "Installing {} model (this may take several minutes)...",
+            self.model_name
+        );
         println!("Download size: ~2.1 GB");
 
         // Start the model download
@@ -68,19 +73,26 @@ impl ModelInstaller {
             .stdout(Stdio::inherit())
             .stderr(Stdio::inherit())
             .spawn()
-            .map_err(|e| InstallError::ModelDownload(format!("Failed to start model download: {}", e)))?;
+            .map_err(|e| {
+                InstallError::ModelDownload(format!("Failed to start model download: {}", e))
+            })?;
 
         // Wait for the download to complete
-        let status = child.wait()
-            .map_err(|e| InstallError::ModelDownload(format!("Failed to wait for download: {}", e)))?;
+        let status = child.wait().map_err(|e| {
+            InstallError::ModelDownload(format!("Failed to wait for download: {}", e))
+        })?;
 
         if !status.success() {
-            return Err(InstallError::ModelDownload("Model download failed".to_string()));
+            return Err(InstallError::ModelDownload(
+                "Model download failed".to_string(),
+            ));
         }
 
         // Verify the installation
         if !self.is_installed() {
-            return Err(InstallError::ModelVerification("Model download completed but verification failed".to_string()));
+            return Err(InstallError::ModelVerification(
+                "Model download completed but verification failed".to_string(),
+            ));
         }
 
         println!("✓ Model {} installed successfully", self.model_name);
@@ -100,11 +112,15 @@ impl ModelInstaller {
 
     /// Test the model with a simple prompt
     pub fn test_model(&self) -> InstallResult<String> {
-        let ollama_path = self.ollama_binary.as_ref()
+        let ollama_path = self
+            .ollama_binary
+            .as_ref()
             .ok_or_else(|| InstallError::ModelVerification("Ollama not found".to_string()))?;
 
         if !self.is_installed() {
-            return Err(InstallError::ModelVerification("Model not installed".to_string()));
+            return Err(InstallError::ModelVerification(
+                "Model not installed".to_string(),
+            ));
         }
 
         let output = Command::new(ollama_path)
@@ -119,13 +135,18 @@ impl ModelInstaller {
             Ok(response)
         } else {
             let error = String::from_utf8_lossy(&output.stderr);
-            Err(InstallError::ModelVerification(format!("Model test failed: {}", error)))
+            Err(InstallError::ModelVerification(format!(
+                "Model test failed: {}",
+                error
+            )))
         }
     }
 
     /// Get model information
     pub fn model_info(&self) -> InstallResult<String> {
-        let ollama_path = self.ollama_binary.as_ref()
+        let ollama_path = self
+            .ollama_binary
+            .as_ref()
             .ok_or_else(|| InstallError::ModelVerification("Ollama not found".to_string()))?;
 
         let output = Command::new(ollama_path)
@@ -133,14 +154,19 @@ impl ModelInstaller {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .output()
-            .map_err(|e| InstallError::ModelVerification(format!("Failed to get model info: {}", e)))?;
+            .map_err(|e| {
+                InstallError::ModelVerification(format!("Failed to get model info: {}", e))
+            })?;
 
         if output.status.success() {
             let info = String::from_utf8_lossy(&output.stdout).trim().to_string();
             Ok(info)
         } else {
             let error = String::from_utf8_lossy(&output.stderr);
-            Err(InstallError::ModelVerification(format!("Failed to get model info: {}", error)))
+            Err(InstallError::ModelVerification(format!(
+                "Failed to get model info: {}",
+                error
+            )))
         }
     }
 
@@ -151,7 +177,9 @@ impl ModelInstaller {
             return Ok(());
         }
 
-        let ollama_path = self.ollama_binary.as_ref()
+        let ollama_path = self
+            .ollama_binary
+            .as_ref()
             .ok_or_else(|| InstallError::ModelDownload("Ollama not found".to_string()))?;
 
         println!("Removing model {}...", self.model_name);
@@ -165,7 +193,10 @@ impl ModelInstaller {
 
         if !output.status.success() {
             let error = String::from_utf8_lossy(&output.stderr);
-            return Err(InstallError::ModelDownload(format!("Failed to remove model: {}", error)));
+            return Err(InstallError::ModelDownload(format!(
+                "Failed to remove model: {}",
+                error
+            )));
         }
 
         println!("✓ Model {} removed successfully", self.model_name);
@@ -202,7 +233,9 @@ impl ModelInstaller {
 
     /// Get available models
     pub fn list_models(&self) -> InstallResult<String> {
-        let ollama_path = self.ollama_binary.as_ref()
+        let ollama_path = self
+            .ollama_binary
+            .as_ref()
             .ok_or_else(|| InstallError::ModelVerification("Ollama not found".to_string()))?;
 
         let output = Command::new(ollama_path)
@@ -210,14 +243,19 @@ impl ModelInstaller {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .output()
-            .map_err(|e| InstallError::ModelVerification(format!("Failed to list models: {}", e)))?;
+            .map_err(|e| {
+                InstallError::ModelVerification(format!("Failed to list models: {}", e))
+            })?;
 
         if output.status.success() {
             let models = String::from_utf8_lossy(&output.stdout).trim().to_string();
             Ok(models)
         } else {
             let error = String::from_utf8_lossy(&output.stderr);
-            Err(InstallError::ModelVerification(format!("Failed to list models: {}", error)))
+            Err(InstallError::ModelVerification(format!(
+                "Failed to list models: {}",
+                error
+            )))
         }
     }
 }
@@ -243,4 +281,4 @@ mod tests {
         let installer = ModelInstaller::new().with_model_name("test:model".to_string());
         assert_eq!(installer.model_name(), "test:model");
     }
-} 
+}
